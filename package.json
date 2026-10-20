@@ -1,6 +1,6 @@
 {
   "name": "drop-import",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Drag Markdown or HTML files and folders onto the Inkdrop window to import them through its built-in import dialog",
   "keywords": ["inkdrop", "inkdrop-plugin", "import", "drag-and-drop", "drop", "markdown", "html", "folder"],
   "license": "MIT",
