@@ -1,0 +1,25 @@
+{
+  "name": "drop-import",
+  "version": "0.1.5",
+  "description": "Drag Markdown or HTML files and folders onto the Inkdrop window to import them through its built-in import dialog",
+  "keywords": ["inkdrop", "inkdrop-plugin", "import", "drag-and-drop", "drop", "markdown", "html", "folder"],
+  "license": "MIT",
+  "repository": "https://github.com/marshyunlee/inkdrop-drag-and-drop-import",
+  "main": "./lib/index",
+  "files": ["lib"],
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test src/*.test.ts",
+    "e2e": "node e2e/run.mjs"
+  },
+  "engines": {
+    "inkdrop": "^6.0.0"
+  },
+  "devDependencies": {
+    "@inkdropapp/types": "^0.1.1",
+    "@types/node": "^24.0.0",
+    "tsdown": "^0.22.3",
+    "typescript": "^6.0.3"
+  }
+}

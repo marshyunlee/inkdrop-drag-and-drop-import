@@ -1,0 +1,7 @@
+node_modules/
+*.log
+.DS_Store
+probes/fixtures/
+probes/results.json
+e2e/fixtures/
+e2e/.env.local
