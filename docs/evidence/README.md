@@ -17,3 +17,12 @@ drop:   RESULT 11 passed, 1 failed, 1 skipped  (note-list failed only because no
 ```
 
 Full outputs: coordinator-e2e-323de03-direct.txt, coordinator-e2e-323de03-drop.txt.
+
+## bf92dbc (astra round 2 fixes)
+
+```
+direct: RESULT 8 passed, 0 failed, 5 skipped
+drop:   RESULT 12 passed, 0 failed, 1 skipped
+```
+
+Full outputs: coordinator-e2e-bf92dbc-direct.txt, coordinator-e2e-bf92dbc-drop.txt.

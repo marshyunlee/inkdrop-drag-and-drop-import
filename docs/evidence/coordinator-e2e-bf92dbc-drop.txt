@@ -1,0 +1,18 @@
+MODE drop; marker=dropimportc353629a20a74feb8d84c83be6d3461d
+NOTEBOOK book:QI4flzEG (E2E Drop Import)
+PASS single-md — 1 notes; child notebooks: none; summary: Import Notes from MarkdownGoing to import 1 Markdown file (0.1 KB total): 1 file — no new notebookCancelNext; picker restored; cleanup: 1 notes, 0 child notebooks
+PASS md-and-txt — 3 notes; child notebooks: none; summary: Import Notes from MarkdownGoing to import 3 Markdown files (0.2 KB total): 3 files — no new notebookCancelNext; picker restored; cleanup: 3 notes, 0 child notebooks
+PASS single-folder — 3 notes; child notebooks: sub; summary: Import Notes from MarkdownGoing to import 3 Markdown files (0.2 KB total): 2 files — no new notebook sub 1 fileCancelNext; picker restored; cleanup: 3 notes, 1 child notebooks
+PASS two-folders — 4 notes; child notebooks: folder1, folder1/sub, folder2; summary: Import Notes from MarkdownGoing to import 4 Markdown files (0.3 KB total): folder1 2 files sub 1 file folder2 1 fileCancelNext; picker restored; cleanup: 4 notes, 3 child notebooks
+PASS folder-and-files — 2 notes; child notebooks: folder2; summary: Import Notes from MarkdownGoing to import 2 Markdown files (0.1 KB total): 1 file — no new notebook folder2 1 fileCancelNext; picker restored; cleanup: 2 notes, 1 child notebooks
+PASS empty-folder — 0 notes; child notebooks: none; summary: Import Notes from MarkdownGoing to import 0 Markdown files (0.0 KB total):CancelNext; picker restored; cleanup: 0 notes, 0 child notebooks
+PASS html-alone — 1 notes; child notebooks: none; summary: Import Notes from HTML — Please select a target notebook; picker restored; cleanup: 1 notes, 0 child notebooks
+PASS md-then-html — 2 notes; child notebooks: none; Markdown then HTML; summaries: Import Notes from MarkdownGoing to import 1 Markdown file (0.1 KB total): 1 file — no new notebookCancelNext | Import Notes from HTML — Please select a target notebook; picker restored; cleanup: 2 notes, 0 child notebooks
+PASS unsupported-only — new notification names skip.pdf; no wizard for 3 s; 0 notes; picker restored; cleanup: 0 notes, 0 child notebooks
+PASS editor-drop — scratch note verified active before drop; no wizard for 3 s; picker restored; cleanup: 1 notes, 0 child notebooks
+PASS note-list — 1 notes; child notebooks: none; summary: Import Notes from MarkdownGoing to import 1 Markdown file (0.1 KB total): 1 file — no new notebookCancelNext; picker restored; cleanup: 1 notes, 0 child notebooks
+PASS cancel — Markdown and HTML Cancel removed dialogs; 0 notes; summaries: Import Notes from MarkdownGoing to import 1 Markdown file (0.1 KB total): 1 file — no new notebookCancelNext | Import Notes from HTML — Please select a target notebook; picker restored; cleanup: 0 notes, 0 child notebooks
+SKIP oversized — The >maxAttachmentFileSize case is not covered
+CLEANUP removed 18 notes and 6 notebooks (including root)
+VERIFY GET /books: no "E2E Drop Import"; GET /notes?keyword=<marker>: 0 for run marker and all 10 file markers
+RESULT 12 passed, 0 failed, 1 skipped
