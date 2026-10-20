@@ -35,6 +35,8 @@ export const IMPORT_COMMANDS = {
 /** Root elements of the built-in wizards; Inkdrop removes them from the DOM when they close. */
 export const MARKDOWN_WIZARD_SELECTOR = '.import-markdown-wizard-dialog'
 export const HTML_WIZARD_SELECTOR = '.import-html-wizard-dialog'
+/** Any open import wizard, whoever opened it; a new import command would replace its selection. */
+export const ANY_IMPORT_WIZARD_SELECTOR = `${MARKDOWN_WIZARD_SELECTOR}, ${HTML_WIZARD_SELECTOR}`
 
 /** How a wait for a wizard ended: it closed, it never appeared while the window was visible, or the plugin was deactivated. */
 export type WizardWaitOutcome = 'closed' | 'absent' | 'aborted'

@@ -11,7 +11,10 @@ for (const [name, value] of Object.entries({ window: {}, document: { body: {} } 
 
 const droppedPaths: ClassifiedPaths ={ markdown: ['/one.md'], html: [], unsupported: [], isFolderOnly: false }
 
-function createHarness(sequence: PluginDependencies['dispatchImportSequence']) {
+function createHarness(
+  sequence: PluginDependencies['dispatchImportSequence'],
+  isImportWizardOpen: () => boolean = () => false
+) {
   const notifications: string[] = []
   const app = {
     dialog: {},
@@ -31,7 +34,8 @@ function createHarness(sequence: PluginDependencies['dispatchImportSequence']) {
       importPaths = options.importPaths
       return () => { disposeCount++ }
     },
-    dispatchImportSequence: sequence
+    dispatchImportSequence: sequence,
+    isImportWizardOpen
   })
   return { app, plugin, notifications, importPaths: () => importPaths!, counts: () => ({ attachCount, disposeCount }) }
 }
@@ -46,6 +50,19 @@ test('activating twice replaces the listener and deactivate disposes it and abor
   harness.plugin.deactivate()
   assert.deepEqual(harness.counts(), { attachCount: 2, disposeCount: 2 })
   assert.equal(signals[0].aborted, true)
+})
+
+test('a drop while any import wizard is open is refused, even with no sequence in flight', async () => {
+  const sequenceCalls: ClassifiedPaths[] = []
+  let isWizardOpen = true
+  const harness = createHarness(async paths => { sequenceCalls.push(paths) }, () => isWizardOpen)
+  harness.plugin.activate(harness.app)
+  await harness.importPaths()(droppedPaths)
+  assert.equal(sequenceCalls.length, 0)
+  assert.deepEqual(harness.notifications, ['info:drop-import: an import is already in progress [dismissable]'])
+  isWizardOpen = false
+  await harness.importPaths()(droppedPaths)
+  assert.equal(sequenceCalls.length, 1)
 })
 
 test('a drop during an in-flight import is refused with one notification', async () => {

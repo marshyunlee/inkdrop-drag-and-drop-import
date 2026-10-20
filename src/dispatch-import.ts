@@ -88,6 +88,12 @@ export async function dispatchImportSequence(
   if (options.signal?.aborted) return
   if (paths.html.length) {
     if (!dispatchImportWithPaths(options, IMPORT_COMMANDS.htmlFiles, paths.html)) return
-    await options.waitForWizardClose(HTML_WIZARD_SELECTOR)
+    const outcome = await options.waitForWizardClose(HTML_WIZARD_SELECTOR)
+    if (outcome === 'absent') {
+      options.notifications.addWarning(
+        'drop-import: the HTML import dialog did not open. Use File → Import instead.',
+        DISMISSABLE_NOTIFICATION
+      )
+    }
   }
 }

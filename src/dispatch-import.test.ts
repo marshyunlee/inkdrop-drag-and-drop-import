@@ -162,6 +162,16 @@ test('mixed drops notify once and pass only supported paths to the importers', a
   ])
 })
 
+test('an absent HTML wizard warns once, dismissably', async () => {
+  const fixture = createImportFixture()
+  fixture.options.waitForWizardClose = async () => 'absent'
+  await dispatchImportSequence({ ...fixture.paths, html: ['/one.html'] }, fixture.options)
+  assert.deepEqual(fixture.commands, [IMPORT_COMMANDS.htmlFiles])
+  assert.equal(fixture.warnings.length, 1)
+  assert.match(fixture.warnings[0], /HTML import dialog did not open/)
+  assert.deepEqual(fixture.notificationOptions, [{ dismissable: true }])
+})
+
 test('HTML-only drops wait for the HTML wizard and never for a Markdown wizard', async () => {
   const fixture = createImportFixture()
   await dispatchImportSequence({ ...fixture.paths, html: ['/one.html'] }, fixture.options)
