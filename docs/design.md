@@ -101,6 +101,7 @@ drop (capture phase, outside editor)
      wait until the Markdown dialog closes (§6)
   6. if htmlItems:
         dispatchImportWithPaths("import-html:import-from-file", htmlItems)
+     wait until the HTML dialog closes (the plugin's in-flight guard covers both dialogs)
 ```
 
 During `dragover` the browser only reveals that files are being dragged, not their names. So the cursor shows "copy" for any file drag outside the editor, and filtering happens on drop.
@@ -120,7 +121,8 @@ drop-import/
 ```
 
 - **Editor exclusion:** skip any event whose target is inside the editor pane (`event.target.closest('.editor')`). Measured in probes/results.md §4: in preview mode `.cm-editor` has a 0×0 rect, so the pane is the only selector that covers edit, preview and side-by-side modes.
-- **Waiting for the Markdown dialog to close:** the dialog root carries the class `import-markdown-wizard-dialog` (from `import-wizard-dialog.tsx`). A `MutationObserver` waits for the node to be removed from the DOM (measured in probes/results.md §5: Inkdrop removes it on close), then the HTML dialog opens.
+- **Waiting for a dialog to close:** the dialog roots carry the classes `import-markdown-wizard-dialog` / `import-html-wizard-dialog` (from each importer's `import-wizard-dialog.tsx`). A `MutationObserver` waits for the node to be removed from the DOM (measured in probes/results.md §5: Inkdrop removes it on close). The HTML dialog opens only after the Markdown dialog is gone, and the sequence ends only after the HTML dialog is gone, so a drop while either is open is refused. A dialog that has not appeared after 5 s of the window being visible counts as absent: the sequence stops, warns the user, and does not open the HTML dialog (hidden windows do not count, since Inkdrop renders nothing while hidden).
+- **Notifications** are created with `dismissable: true`; Inkdrop never removes a notification created without it.
 - **Lifecycle:** `deactivate` removes both listeners and disconnects the observer.
 - **No settings, no commands, no menus.**
 

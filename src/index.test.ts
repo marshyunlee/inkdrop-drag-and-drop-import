@@ -17,7 +17,8 @@ function createHarness(sequence: PluginDependencies['dispatchImportSequence']) {
     dialog: {},
     commands: { dispatch: () => true },
     notifications: {
-      addInfo: (message: string) => notifications.push(`info:${message}`),
+      addInfo: (message: string, options?: { dismissable?: boolean }) =>
+        notifications.push(`info:${message}${options?.dismissable ? ' [dismissable]' : ''}`),
       addError: (message: string) => notifications.push(`error:${message}`)
     }
   } as unknown as Environment
@@ -58,7 +59,7 @@ test('a drop during an in-flight import is refused with one notification', async
   const firstImport = harness.importPaths()(droppedPaths)
   await harness.importPaths()(droppedPaths)
   assert.equal(sequenceCalls.length, 1)
-  assert.deepEqual(harness.notifications, ['info:drop-import: an import is already in progress'])
+  assert.deepEqual(harness.notifications, ['info:drop-import: an import is already in progress [dismissable]'])
   finishSequence()
   await firstImport
   const secondImport = harness.importPaths()(droppedPaths)

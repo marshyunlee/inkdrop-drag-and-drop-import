@@ -1,10 +1,18 @@
+import type { WizardWaitOutcome } from './types.ts'
+
 // Inkdrop removes a wizard's root element from the DOM when it closes, so "closed" means the
-// node is gone. The wizard appears a moment after its command is dispatched; if it never does
-// (importer refused silently), the wait gives up after the appearance timeout.
+// node is gone. The wizard appears a moment after its command is dispatched, but only while the
+// window is visible: a hidden window never commits React updates, so the appearance timeout
+// counts visible time only. If the wizard still has not appeared, the wait reports "absent".
 const WIZARD_APPEARANCE_TIMEOUT_MS = 5000
 
+type WaitDocument = Pick<
+  Document,
+  'body' | 'querySelector' | 'visibilityState' | 'addEventListener' | 'removeEventListener'
+>
+
 interface WizardWaitOptions {
-  document?: Pick<Document, 'body' | 'querySelector'>
+  document?: WaitDocument
   MutationObserver?: typeof MutationObserver
   signal?: AbortSignal
 }
@@ -12,14 +20,14 @@ interface WizardWaitOptions {
 export function waitForWizardClose(
   selector: string,
   options: WizardWaitOptions = {}
-): Promise<void> {
-  const documentRoot = options.document ?? document
+): Promise<WizardWaitOutcome> {
+  const documentRoot: WaitDocument = options.document ?? document
   const Observer = options.MutationObserver ?? MutationObserver
   const { signal } = options
 
   return new Promise(resolve => {
     if (signal?.aborted) {
-      resolve()
+      resolve('aborted')
       return
     }
 
@@ -27,11 +35,23 @@ export function waitForWizardClose(
     let isWizardObserved = false
     const observer = new Observer(inspectWizard)
 
-    function finishWaiting() {
+    function finishWaiting(outcome: WizardWaitOutcome) {
       observer.disconnect()
       clearTimeout(appearanceTimer)
-      signal?.removeEventListener('abort', finishWaiting)
-      resolve()
+      documentRoot.removeEventListener('visibilitychange', restartAppearanceTimer)
+      signal?.removeEventListener('abort', finishAborted)
+      resolve(outcome)
+    }
+
+    function finishAborted() {
+      finishWaiting('aborted')
+    }
+
+    function restartAppearanceTimer() {
+      clearTimeout(appearanceTimer)
+      if (documentRoot.visibilityState === 'visible') {
+        appearanceTimer = setTimeout(() => finishWaiting('absent'), WIZARD_APPEARANCE_TIMEOUT_MS)
+      }
     }
 
     function inspectWizard() {
@@ -40,17 +60,19 @@ export function waitForWizardClose(
         if (!isWizardObserved) {
           isWizardObserved = true
           clearTimeout(appearanceTimer)
+          documentRoot.removeEventListener('visibilitychange', restartAppearanceTimer)
           observer.disconnect()
           observer.observe(wizard.parentNode!, { childList: true })
         }
       } else if (isWizardObserved) {
-        finishWaiting()
+        finishWaiting('closed')
       }
     }
 
-    signal?.addEventListener('abort', finishWaiting, { once: true })
+    signal?.addEventListener('abort', finishAborted, { once: true })
+    documentRoot.addEventListener('visibilitychange', restartAppearanceTimer)
     observer.observe(documentRoot.body, { childList: true, subtree: true })
-    appearanceTimer = setTimeout(finishWaiting, WIZARD_APPEARANCE_TIMEOUT_MS)
+    restartAppearanceTimer()
     inspectWizard()
   })
 }

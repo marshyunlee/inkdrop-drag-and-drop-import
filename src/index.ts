@@ -1,6 +1,7 @@
 import type { Environment, IInkdropPlugin } from '@inkdropapp/types'
 import { dispatchImportSequence } from './dispatch-import.ts'
 import { attachDropListener } from './drop-listener.ts'
+import { DISMISSABLE_NOTIFICATION } from './types.ts'
 import { waitForWizardClose } from './wait-for-wizard-close.ts'
 
 export interface PluginDependencies {
@@ -27,7 +28,7 @@ export class DropImportPlugin implements IInkdropPlugin {
     this.disposeListener = this.dependencies.attachDropListener(window, {
       importPaths: async paths => {
         if (this.isImportInFlight) {
-          app.notifications.addInfo('drop-import: an import is already in progress')
+          app.notifications.addInfo('drop-import: an import is already in progress', DISMISSABLE_NOTIFICATION)
           return
         }
         this.isImportInFlight = true

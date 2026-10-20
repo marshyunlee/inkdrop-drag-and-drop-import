@@ -32,7 +32,14 @@ export const IMPORT_COMMANDS = {
   htmlFiles: 'import-html:import-from-file'
 } as const
 
-/** Root element of the built-in Markdown wizard; it is removed from the DOM when the wizard closes. */
+/** Root elements of the built-in wizards; Inkdrop removes them from the DOM when they close. */
 export const MARKDOWN_WIZARD_SELECTOR = '.import-markdown-wizard-dialog'
+export const HTML_WIZARD_SELECTOR = '.import-html-wizard-dialog'
+
+/** How a wait for a wizard ended: it closed, it never appeared while the window was visible, or the plugin was deactivated. */
+export type WizardWaitOutcome = 'closed' | 'absent' | 'aborted'
+
+/** Inkdrop only lets the user (and its 10 s auto-dismiss) close notifications created with this. */
+export const DISMISSABLE_NOTIFICATION = { dismissable: true } as const
 /** The note editor pane (edit, preview and side-by-side modes). Drops here are left to Inkdrop. */
 export const EDITOR_PANE_SELECTOR = '.editor'

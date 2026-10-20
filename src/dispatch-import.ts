@@ -1,13 +1,18 @@
 import { basename } from 'node:path'
 import type { Environment } from '@inkdropapp/types'
-import { IMPORT_COMMANDS, MARKDOWN_WIZARD_SELECTOR } from './types.ts'
-import type { ClassifiedPaths } from './types.ts'
+import {
+  DISMISSABLE_NOTIFICATION,
+  HTML_WIZARD_SELECTOR,
+  IMPORT_COMMANDS,
+  MARKDOWN_WIZARD_SELECTOR
+} from './types.ts'
+import type { ClassifiedPaths, WizardWaitOutcome } from './types.ts'
 
 export interface ImportOptions {
   dialog: Pick<Environment['dialog'], 'showOpenDialog'>
   notifications: Pick<Environment['notifications'], 'addWarning' | 'addError'>
   dispatchCommand: (command: string) => unknown
-  waitForWizardClose: (selector: string) => Promise<void>
+  waitForWizardClose: (selector: string) => Promise<WizardWaitOutcome>
   signal?: AbortSignal
 }
 
@@ -42,13 +47,17 @@ export function dispatchImportWithPaths(
   }
 
   if (!isPickerRequested) {
-    notifications.addError('drop-import: the built-in importer is not available (disabled or missing).')
+    notifications.addError(
+      'drop-import: the built-in importer is not available (disabled or missing).',
+      DISMISSABLE_NOTIFICATION
+    )
   }
   return isPickerRequested
 }
 
-// Markdown items (files and folders) share one wizard; HTML has its own. The second wizard can
-// only open once the first is gone, so the sequence waits for the Markdown wizard's removal.
+// Markdown items (files and folders) share one wizard; HTML has its own. Each wizard is a
+// singleton inside Inkdrop, so a new import command while one is open replaces its selection:
+// the sequence therefore stays pending until the wizard it opened has closed.
 export async function dispatchImportSequence(
   paths: ClassifiedPaths,
   options: ImportOptions
@@ -56,7 +65,8 @@ export async function dispatchImportSequence(
   if (options.signal?.aborted) return
   if (paths.unsupported.length) {
     options.notifications.addWarning(
-      `drop-import: unsupported items: ${paths.unsupported.map(item => basename(item)).join(', ')}`
+      `drop-import: unsupported items: ${paths.unsupported.map(item => basename(item)).join(', ')}`,
+      DISMISSABLE_NOTIFICATION
     )
   }
   if (paths.markdown.length) {
@@ -64,10 +74,20 @@ export async function dispatchImportSequence(
       ? IMPORT_COMMANDS.markdownFolders
       : IMPORT_COMMANDS.markdownFiles
     if (!dispatchImportWithPaths(options, command, paths.markdown)) return
-    await options.waitForWizardClose(MARKDOWN_WIZARD_SELECTOR)
+    const outcome = await options.waitForWizardClose(MARKDOWN_WIZARD_SELECTOR)
+    if (outcome === 'absent') {
+      options.notifications.addWarning(
+        paths.html.length
+          ? 'drop-import: the import dialog did not open; the HTML files were not imported. Use File → Import instead.'
+          : 'drop-import: the import dialog did not open. Use File → Import instead.',
+        DISMISSABLE_NOTIFICATION
+      )
+    }
+    if (outcome !== 'closed') return
   }
   if (options.signal?.aborted) return
   if (paths.html.length) {
-    dispatchImportWithPaths(options, IMPORT_COMMANDS.htmlFiles, paths.html)
+    if (!dispatchImportWithPaths(options, IMPORT_COMMANDS.htmlFiles, paths.html)) return
+    await options.waitForWizardClose(HTML_WIZARD_SELECTOR)
   }
 }
