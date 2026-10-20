@@ -1,0 +1,18 @@
+MODE direct; marker=dropimport3ff4003578b5486ea27d5d45c36369bc
+NOTEBOOK book:5G8t7aO6 (E2E Drop Import)
+PASS single-md — 1 notes; child notebooks: none; summary: Import Notes from MarkdownGoing to import 1 Markdown file (0.1 KB total): 1 file — no new notebookCancelNext; cleanup: 1 notes, 0 child notebooks
+PASS md-and-txt — 3 notes; child notebooks: none; summary: Import Notes from MarkdownGoing to import 3 Markdown files (0.2 KB total): 3 files — no new notebookCancelNext; cleanup: 3 notes, 0 child notebooks
+PASS single-folder — 3 notes; child notebooks: sub; summary: Import Notes from MarkdownGoing to import 3 Markdown files (0.2 KB total): 2 files — no new notebook sub 1 fileCancelNext; cleanup: 3 notes, 1 child notebooks
+PASS two-folders — 4 notes; child notebooks: folder1, folder1/sub, folder2; summary: Import Notes from MarkdownGoing to import 4 Markdown files (0.3 KB total): folder1 2 files sub 1 file folder2 1 fileCancelNext; cleanup: 4 notes, 3 child notebooks
+PASS folder-and-files — 2 notes; child notebooks: folder2; summary: Import Notes from MarkdownGoing to import 2 Markdown files (0.1 KB total): 1 file — no new notebook folder2 1 fileCancelNext; cleanup: 2 notes, 1 child notebooks
+PASS empty-folder — 0 notes; child notebooks: none; summary: Import Notes from MarkdownGoing to import 0 Markdown files (0.0 KB total):CancelNext; cleanup: 0 notes, 0 child notebooks
+PASS html-alone — 1 notes; child notebooks: none; summary: Import Notes from HTML — Please select a target notebook; cleanup: 1 notes, 0 child notebooks
+SKIP md-then-html — drop mode only
+SKIP unsupported-only — drop mode only
+SKIP editor-drop — drop mode only
+SKIP note-list — drop mode only
+PASS cancel — Markdown and HTML Cancel removed dialogs; 0 notes; summaries: Import Notes from MarkdownGoing to import 1 Markdown file (0.1 KB total): 1 file — no new notebookCancelNext | Import Notes from HTML — Please select a target notebook; cleanup: 0 notes, 0 child notebooks
+SKIP oversized — The >maxAttachmentFileSize case is not covered
+CLEANUP removed 14 notes and 6 notebooks (including root)
+VERIFY GET /books: no "E2E Drop Import"; GET /notes?keyword=<marker>: 0 for run marker and all 10 file markers
+RESULT 8 passed, 0 failed, 5 skipped

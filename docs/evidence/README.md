@@ -8,3 +8,12 @@ drop:   RESULT 12 passed, 0 failed, 1 skipped
 ```
 
 Full outputs: coordinator-e2e-bd3a599-direct.txt, coordinator-e2e-bd3a599-drop.txt.
+
+## 323de03 (bug fixes from the astra review)
+
+```
+direct: RESULT 8 passed, 0 failed, 5 skipped
+drop:   RESULT 11 passed, 1 failed, 1 skipped  (note-list failed only because no note list was shown in the live app; it passed in isolation once a list was shown, and the harness now shows one itself)
+```
+
+Full outputs: coordinator-e2e-323de03-direct.txt, coordinator-e2e-323de03-drop.txt.

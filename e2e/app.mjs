@@ -234,6 +234,14 @@ export class App {
 
   async dropFiles(files, selector) {
     assert.ok(['.sidebar-menu', '.note-list-bar', '.editor'].includes(selector))
+    if (selector === '.note-list-bar') {
+      await this.evaluate(`(() => {
+        if (document.querySelector('.note-list-bar')) return
+        const layout = document.querySelector('.note-list-bar-layout') ?? document.body
+        inkdrop.commands.dispatch(layout, 'core:note-list-show-all-notes')
+      })()`)
+      await this.poll(() => this.evaluate('!!document.querySelector(".note-list-bar")'), 'note list shown')
+    }
     const point = await this.evaluate(`(() => {
       const element = document.querySelector(${JSON.stringify(selector)})
       if (!element) throw new Error('Drop region is missing')
